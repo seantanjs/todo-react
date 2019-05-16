@@ -9,3 +9,13 @@ table {
     margin: 30px auto;
     border: 5px solid black;
     }
+
+.header-title {
+	display: flex;
+	justify-content: space-around;
+}
+
+.form {
+	display: flex;
+	justify-content: center;
+}
