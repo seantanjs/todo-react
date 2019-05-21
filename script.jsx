@@ -29,17 +29,23 @@ class DeletedItemList extends React.Component {
   }
 }
 
+// let elem = document.getElementById("ppl")
+
+// elem.addEventListener("onchange", function(){this.props.editItem(e)})
+
+// elem.addEventListener("onchange", this.props.editItem)
+
 class TodoItem extends React.Component {
   render() {
       // render the list with a map() here
       let listItems = this.props.listItems.map( (item,index) => {
+          console.log(item)
             return <tr key={index}>
                        <td>{index+1}</td>
-                       <td>{item.activity}</td>
+                       <td><input onChange={()=>this.props.editItem(event)} value={item.activity} name={index}></input></td>
                        <td>{item.created_at}</td>
                        <td>
-                           <button onClick={(index)=> this.props.deleteItem(index)}>Remove activity</button>
-                           <button onClick={(index)=> this.props.editItem(index)}>Edit activity</button>
+                           <button onClick={()=>this.props.deleteItem(index)}>Remove activity</button>
                        </td>
                     </tr>
         })
@@ -58,14 +64,16 @@ class ItemList extends React.Component {
     super()
     this.changeHandler = this.changeHandler.bind( this );
     this.deleteItem = this.deleteItem.bind( this );
+    this.editItem = this.editItem.bind( this );
+
   }
 
-  state = {
-    list : [],
-    activity : "",
-    errorMsg: "",
-    deletedList: []
-  }
+   state = {
+        list : [],
+        activity : "",
+        errorMsg: "",
+        deletedList: []
+      }
 
 
   changeHandler(event){
@@ -86,18 +94,25 @@ class ItemList extends React.Component {
         console.log(this.state.deletedList);
     }
 
-    editItem(index) {
-        alert("test");
+  editItem(event) {
+        console.log(event.target.value,"value");
+        console.log(event.target.name,"try out key");
+
+        let toBeUpdatedList = this.state.list;
+        toBeUpdatedList[event.target.name].activity = event.target.value;
+        this.setState({list: toBeUpdatedList});
     }
 
   addItem(event){
       if(this.state.activity.length == 0) {
+          event.preventDefault();
           this.state.errorMsg = "Eh pls enter smth la!"
           this.setState({
             errorMsg: this.state.errorMsg
         });
            console.log(this.state.list);
       } else {
+          event.preventDefault();
           this.state.list.push({
               "activity": this.state.activity,
               "created_at": moment().format('D MMMM YYYY, h:mm:ss a'),
@@ -117,10 +132,12 @@ class ItemList extends React.Component {
       return (
         <div>
           <div className="form">
+          <form onSubmit={(event)=>{this.addItem(event)}}>
               <input disabled={this.state.disabled} onChange={(event)=>{this.changeHandler(event);}} value={this.state.activity}/><br/>
               <div style={{"color":"red"}}>{this.state.activity.length >= 10 ? "Eh too long la!" : ""}</div>
               <div style={{"color":"blue"}}>{this.state.errorMsg}</div>
-              <button onClick={(event)=>{this.addItem(event);}}>add item</button>
+              <button type="submit">Add Item</button>
+              </form>
           </div>
           <div className="header-title">
               <h2>List of activites</h2>
@@ -165,3 +182,9 @@ ReactDOM.render(
     <TodoApp />,
     document.getElementById('root')
 );
+
+
+// <td><input onChange={function(){this.props.editItem()}} onChange={()=> this.props.editItem()}      onChange={this.props.editItem} value={item.activity} current={index}></input></td>
+
+
+// <td><input onChange={(never)=>{console.log("****************",never,"pee");this.props.editItem(never,event,item,index)}}  value={item.activity} name={index}></input></td>
